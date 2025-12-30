@@ -18,7 +18,7 @@ class CategoryController extends Controller
     public function index()
     {
         $Categories = Category::when(request()->search, function ($Categories) {
-            $Categories = $Categories->where('name', 'like', '%' . request()->search . '%');
+        $Categories = $Categories->where('name', 'like', '%' . request()->search . '%');
         })->latest()->paginate(5);
         $Categories->appends(['search' => request()->search]);
         return new CategoryResource(true, 'List cities', $Categories);

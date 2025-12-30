@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Admin\BankController;
 use App\Http\Controllers\Api\Admin\CategoryController;
 use App\Http\Controllers\Api\Admin\CityController;
 use App\Http\Controllers\Api\Admin\FacilityController;
+use App\Http\Controllers\Api\Admin\HouseController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -17,5 +18,6 @@ Route::prefix('admin')->group(function(){
     Route::apiResource('banks', BankController::class);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('facilities', FacilityController::class);
+    Route::apiResource('houses', HouseController::class);
     Route::post('/logout', [LoginController::class, 'logout']);
-});
+})->middleware('auth:api');
