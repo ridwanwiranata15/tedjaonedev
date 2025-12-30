@@ -32,7 +32,7 @@ class CityController extends Controller
         $cities = City::when(request()->search, function($cities) {
             $cities = $cities->where('name', 'like', '%' . request()->search . '%');
         })->latest()->paginate(5);
-        $cities->appends(['search' => request()->search()]);
+        $cities->appends(['search' => request()->search]);
         return new CityResource(true, 'List cities', $cities);
     }
 
@@ -56,10 +56,14 @@ class CityController extends Controller
         if($validator->fails()){
             return response()->json($validator->errors(), 422);
         }
+
+        $photo = $request->file('photo');
+        $photo->storeAs('cities', $photo->hashName(), 'public');
         $city = City::create(
-            ['name' => $request->name,
-            'photo' => $request->photo,
-            'slug' => $request->name]
+            [
+            'name' => $request->name,
+            'photo' => $photo->hashName(),
+            'slug' => Str::slug($request->name, '-')]
         );
         if($city){
             return new CityResource(true, 'Data berhasil disimpan', $city);
@@ -87,24 +91,24 @@ class CityController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, City $city)
-    {
-         $validator = Validator::make($request->all(), [
-            'name'  => 'required',
-            'photo' => 'required'
-        ]);
-        if($validator->fails()){
-            return response()->json($validator->errors(), 422);
-        }
-        $city->update([
-            'name' => $request->name,
-            'photo' => $request->photo,
-            'slug' => $request->name
-        ]);
-        if($city){
-            return new CityResource(true, 'Perubahan data kota berhasil dilakukan', $city);
-        }
-        return new CityResource(false, 'Perubahan data kota gagal dilakukan', null);
+{
+    $validator = Validator::make($request->all(), [
+        'name'  => 'required',
+        // 'photo' => 'required' // Catatan: Biasanya update foto dibuat opsional
+    ]);
+
+    if($validator->fails()){
+        return response()->json($validator->errors(), 422);
     }
+
+    $city->update([
+        'name' => $request->name,
+        'slug' => Str::slug($request->name, '-'), // Tambahkan Str::slug di sini
+        // 'photo' => $request->photo, // Hati-hati, update foto biasanya perlu logic upload file
+    ]);
+
+    return new CityResource(true, 'Perubahan data kota berhasil dilakukan', $city);
+}
 
     /**
      * Remove the specified resource from storage.

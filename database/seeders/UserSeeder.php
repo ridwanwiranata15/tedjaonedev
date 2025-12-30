@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
@@ -15,20 +16,27 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-         $user = User::create([
-            'name'      => 'Administrator',
-            'email'     => 'admin@gmail.com',
-            'password'  => bcrypt('password'),
-        ]);
+       // 1. Buat User
+    $user = User::create([
+        'name'     => 'Administrator',
+        'email'    => 'admin@gmail.com',
+        'phone'    => '085777750854',
+        'photo'    => 'onedev.jpg',
+        'password' => Hash::make('onedev123')
+    ]);
 
-        // Ambil role admin untuk guard 'api'
-        $role = Role::where('name', 'admin')->where('guard_name', 'api')->first();
+    // 2. Gunakan firstOrCreate agar tidak null
+    $role = Role::firstOrCreate(
+        ['name' => 'admin', 'guard_name' => 'api']
+    );
 
-        // Assign semua permission ke role ini
-        $permissions = Permission::where('guard_name', 'api')->get();
-        $role->syncPermissions($permissions);
+    // 3. Ambil semua permission untuk guard api
+    $permissions = Permission::where('guard_name', 'api')->get();
 
-        // Assign role ke user
-        $user->assignRole($role);
+    // 4. Sinkronisasi (Sekarang tidak akan error karena $role sudah pasti ada)
+    $role->syncPermissions($permissions);
+
+    // 5. Assign role ke user
+    $user->assignRole($role);
     }
 }
