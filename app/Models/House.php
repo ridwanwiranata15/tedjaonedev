@@ -31,6 +31,9 @@ class House extends Model
     }
 
     public function houseFacility(){
-        return $this->hasMany(FacilityHouse::class, 'facility_house_id');
+        return $this->hasMany(FacilityHouse::class);
+    }
+    public function images(){
+        return $this->hasMany(ImagesHouse::class);
     }
 }

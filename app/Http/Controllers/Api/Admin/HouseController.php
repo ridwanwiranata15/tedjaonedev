@@ -16,7 +16,7 @@ class HouseController extends Controller
      */
     public function index()
     {
-        $houses = House::with(['categories', 'cities'])
+        $houses = House::with(['categories', 'cities', 'images', 'houseFacility.facility'])
             ->when(
                 request('search'),
                 fn($q) =>
