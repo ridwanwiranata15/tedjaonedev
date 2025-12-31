@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\Admin\FacilityController;
 use App\Http\Controllers\Api\Admin\FacilityHouseController;
 use App\Http\Controllers\Api\Admin\HouseController;
 use App\Http\Controllers\Api\Admin\ImagesHouseController;
+use App\Http\Controllers\Api\Admin\InterestController;
+use App\Http\Controllers\Api\Admin\MortgageRequestController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -23,5 +25,7 @@ Route::prefix('admin')->group(function(){
     Route::apiResource('houses', HouseController::class);
     Route::apiResource('facilityhouse', FacilityHouseController::class);
     Route::apiResource('imagehouse', ImagesHouseController::class);
+    Route::apiResource('interests', InterestController::class);
+    Route::apiResource('mortgagerequests', MortgageRequestController::class);
     Route::post('/logout', [LoginController::class, 'logout']);
 })->middleware('auth:api');

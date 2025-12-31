@@ -15,13 +15,14 @@ class MortgageRequest extends Model
         'loan_interest_total_amount',
         'monthly_amount',
         'status',
-        'documents'
+        'documents',
+        'interst'
     ];
 
     public function users(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
     public function interests(){
-        return $this->belongsTo(Interest::class);
+        return $this->belongsTo(Interest::class, 'interest_id');
     }
 }

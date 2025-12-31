@@ -9,9 +9,9 @@ class Interest extends Model
     protected $fillable = ['house_id','bank_id', 'interest', 'duration'];
 
     public function houses(){
-        return $this->belongsTo(House::class);
+        return $this->belongsTo(House::class, 'house_id');
     }
     public function banks(){
-        return $this->belongsTo(Bank::class);
+        return $this->belongsTo(Bank::class, 'bank_id');
     }
 }
