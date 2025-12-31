@@ -17,11 +17,19 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $Categories = Category::when(request()->search, function ($Categories) {
-        $Categories = $Categories->where('name', 'like', '%' . request()->search . '%');
-        })->latest()->paginate(5);
-        $Categories->appends(['search' => request()->search]);
-        return new CategoryResource(true, 'List cities', $Categories);
+        $category = Category::with(['houses'])
+        ->when(request('search'), function ($q) {
+            $q->where('house_id', request('search'));
+        })
+        ->latest()
+        ->paginate(5)
+        ->appends(request()->only('search'));
+
+    return response()->json([
+        'status' => true,
+        'message' => 'List data fasilitas rumah',
+        'data' => $category
+    ]);
     }
 
     /**

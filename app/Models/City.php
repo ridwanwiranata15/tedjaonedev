@@ -14,4 +14,7 @@ class City extends Model
             get: fn ($image) => url('/storage/cities/' . $image),
         );
     }
+    public function houses(){
+        return $this->hasMany(House::class);
+    }
 }

@@ -17,11 +17,19 @@ class FacilityController extends Controller
      */
     public function index()
     {
-        $facilities = Facility::when(request()->search, function ($facilities) {
-            $facilities = $facilities->where('name', 'like', '%' . request()->search . '%');
-        })->latest()->paginate(5);
-        $facilities->appends(['search' => request()->search]);
-        return new FacilityResource(true, 'List cities', $facilities);
+        $facility = Facility::with(['houseFacility.house'])
+            ->when(request('search'), function ($q) {
+                $q->where('house_id', request('search'));
+            })
+            ->latest()
+            ->paginate(5)
+            ->appends(request()->only('search'));
+
+        return response()->json([
+            'status' => true,
+            'message' => 'List data fasilitas rumah',
+            'data' => $facility
+        ]);
     }
 
     /**
@@ -104,7 +112,7 @@ class FacilityController extends Controller
      */
     public function destroy(Facility $Facility)
     {
-         if($Facility->delete()){
+        if ($Facility->delete()) {
             return new FacilityResource(true, 'Penghapusan data fasilitas berhasil dilakukan', $Facility);
         }
         return new FacilityResource(false, 'Perubahan data fasilitas gagal dilakukan', $Facility);

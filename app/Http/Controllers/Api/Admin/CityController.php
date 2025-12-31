@@ -29,11 +29,23 @@ class CityController extends Controller
      */
     public function index()
     {
-        $cities = City::when(request()->search, function($cities) {
-            $cities = $cities->where('name', 'like', '%' . request()->search . '%');
-        })->latest()->paginate(5);
-        $cities->appends(['search' => request()->search]);
-        return new CityResource(true, 'List cities', $cities);
+        // $cities = City::when(request()->search, function($cities) {
+        //     $cities = $cities->where('name', 'like', '%' . request()->search . '%');
+        // })->latest()->paginate(5);
+        // $cities->appends(['search' => request()->search]);
+        $city = City::with(['houses'])
+        ->when(request('search'), function ($q) {
+            $q->where('house_id', request('search'));
+        })
+        ->latest()
+        ->paginate(5)
+        ->appends(request()->only('search'));
+
+    return response()->json([
+        'status' => true,
+        'message' => 'List data fasilitas rumah',
+        'data' => $city
+    ]);
     }
 
     /**

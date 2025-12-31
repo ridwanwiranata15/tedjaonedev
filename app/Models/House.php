@@ -24,12 +24,13 @@ class House extends Model
 
 
     public function categories(){
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
     public function cities(){
-        return $this->belongsTo(City::class);
+        return $this->belongsTo(City::class, 'city_id');
     }
-    public function facilities(){
-        return $this->belongsTo(Facility::class);
+
+    public function houseFacility(){
+        return $this->hasMany(FacilityHouse::class, 'facility_house_id');
     }
 }

@@ -24,10 +24,8 @@ return new class extends Migration
             $table->string('electric');
             $table->string('building_area');
             $table->string('land_area');
-            $table->foreignId('category_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('city_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('facility_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignId('images');
+            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('city_id')->constrained('cities')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

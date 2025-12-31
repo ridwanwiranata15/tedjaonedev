@@ -16,16 +16,15 @@ class HouseController extends Controller
      */
     public function index()
     {
-        // $houses = House::with(['categories', 'cities', 'facilities'])->get();
-        // return response()->json([
-        //     'status' => true,
-        //     'data' => $houses
-        // ]);
-
-        $houses = House::when(request()->search, function($houses){
-            $houses = $houses->where('name', 'like', '%' . request()->search . '%');
-        })->latest()->paginate(5);
-        $houses->appends(['search' => request()->search]);
+        $houses = House::with(['categories', 'cities'])
+            ->when(
+                request('search'),
+                fn($q) =>
+                $q->where('name', 'like', '%' . request('search') . '%')
+            )
+            ->latest()
+            ->paginate(5)
+            ->appends(request()->only('search'));
         return new HouseResource(true, 'List data rumah', $houses);
     }
 
@@ -43,8 +42,7 @@ class HouseController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-             "name" => 'required',
-            "slug" => 'required',
+            "name" => 'required',
             "thumbnail" => 'required',
             "about" => 'required',
             "price" => 'required',
@@ -57,8 +55,8 @@ class HouseController extends Controller
             "category_id" => 'required',
             "city_id" => 'required'
         ]);
-        if($validator->fails()){
-             return response()->json($validator->errors(), 422);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
         $thumbnail = $request->file('thumbnail');
         $thumbnail->storeAs('houses', $thumbnail->hashName(), 'public');
@@ -77,7 +75,7 @@ class HouseController extends Controller
             "category_id" => $request->category_id,
             "city_id" => $request->city_id
         ]);
-        if($house){
+        if ($house) {
             return new HouseResource(true, 'Data rumah baru berhasil di tambahkan', $house);
         }
         return new HouseResource(false, 'Data rumah baru gagal di tambahkan', $house);
@@ -105,7 +103,7 @@ class HouseController extends Controller
     public function update(House $house, Request $request)
     {
         $validator = Validator::make($request->all(), [
-             "name" => 'required',
+            "name" => 'required',
             "slug" => 'required',
             "thumbnail" => 'required',
             "about" => 'required',
@@ -119,8 +117,8 @@ class HouseController extends Controller
             "category_id" => 'required',
             "city_id" => 'required'
         ]);
-        if($validator->fails()){
-             return response()->json($validator->errors(), 422);
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
         $thumbnail = $request->file('thumbnail');
         $thumbnail->storeAs('houses', $thumbnail->hashName(), 'public');
@@ -139,7 +137,7 @@ class HouseController extends Controller
             "category_id" => $request->category_id,
             "city_id" => $request->city_id
         ]);
-         return new HouseResource(true, 'Data rumah baru berhasil di ubah', $house);
+        return new HouseResource(true, 'Data rumah baru berhasil di ubah', $house);
     }
 
     /**
@@ -148,6 +146,6 @@ class HouseController extends Controller
     public function destroy(House $house)
     {
         $house->delete();
-         return new HouseResource(true, 'Data rumah baru berhasil di hapus', $house);
+        return new HouseResource(true, 'Data rumah baru berhasil di hapus', $house);
     }
 }
