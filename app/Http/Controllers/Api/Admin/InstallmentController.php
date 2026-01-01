@@ -14,7 +14,27 @@ class InstallmentController extends Controller
      */
     public function index()
     {
-        //
+        $installments = Installment::with([
+            'MortgageRequests.users',
+            'MortgageRequests.interests',
+            'MortgageRequests.interests.houses',
+            'MortgageRequests.interests.houses.cities',
+            'MortgageRequests.interests.houses.categories',
+            'MortgageRequests.interests.banks'
+        ])
+            ->when(
+                request('search'),
+                fn($q) =>
+                $q->where('name', 'like', '%' . request('search') . '%')
+            )
+            ->latest()
+            ->paginate(5)
+            ->appends(request()->only('search'));
+        return response()->json([
+            'status' => true,
+            'message' => 'list mortgage request',
+            'data' => $installments
+        ]);
     }
 
     /**

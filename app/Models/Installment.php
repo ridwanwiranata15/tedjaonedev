@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Installment extends Model
 {
     protected $fillable = [
-        'mortgage_resquest_id',
+        'mortgage_request_id',
         'no_of_payment',
         'total_tax_payment',
         'grand_total_amount',
@@ -19,6 +19,6 @@ class Installment extends Model
         'remaining_loan_amount'
     ];
     public function MortgageRequests(){
-        return $this->belongsTo(MortgageRequest::class);
+        return $this->belongsTo(MortgageRequest::class, 'mortgage_request_id', 'id');
     }
 }
